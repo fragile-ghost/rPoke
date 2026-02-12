@@ -8,7 +8,11 @@ with open('Pokemon Randomizer/pokedex.json', 'r', encoding='utf-8') as file:
 with open('Pokemon Randomizer/learnsets.json', 'r', encoding='utf-8') as file:
     LEARNSET_DATA = json.load(file)
 with open("Pokemon Randomizer/items.json", "r") as file:
-    ITEM_DATA = json.load(file)
+    unfiliterd_items = json.load(file)
+for item in unfiliterd_items:
+    if item["itemUser"]:
+        unfiliterd_items.remove[item]
+ITEM_DATA = unfiliterd_items
 
 class Pokemon:
     def __init__(self, gameGeneration=9, level:int = 1, dexNo:int = 0, name:str = "", fullGen:bool = True):
@@ -110,7 +114,7 @@ class Pokemon:
 
     def generate_held_item(self):
         itemNo = r.randint(0,NUM_ITEMS)
-        i = 0
+
         for key in ITEM_DATA:
             if i == itemNo:
                 self.item = ITEM_DATA[key]["name"]
