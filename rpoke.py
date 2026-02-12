@@ -14,7 +14,8 @@ with open(os.path.join(__location__, "items.json"), "r", encoding='utf-8') as fi
     ITEM_DATA = json.load(file)
 
 class Pokemon:
-    def __init__(self, gameGeneration=9, level:int = 1, dexNo:int = 0, name:str = "", fullGen:bool = True):
+    def __init__(self, gameGeneration:int=9, level:int = 1, dexNo:int = 0, name:str = "", fullyRandom:bool = True,
+                isFullyEvolved = False):
 
         if gameGeneration < 3:
             raise ValueError("Data only supports generation 3 or higher.")
@@ -24,7 +25,7 @@ class Pokemon:
         self.name = name
         self.lvl = level
         self.gen = gameGeneration
-        self.select_pokemon(name)
+        self.select_pokemon(name,isFullyEvolved)
         
         self.ability = ""
         self.nature = ""
@@ -33,19 +34,23 @@ class Pokemon:
         self.EVs = []
         self.IVs = []
 
-        if fullGen:
+        if fullyRandom:
             self.randomize()
 
-    def select_pokemon(self, name = ""):
+    def select_pokemon(self, name = "", isFullyEvolved = False):
         try:
             if name:
                 self.pokeDict = POKEDEX_DATA[name.lower()]
+                self.name = self.pokeDict["name"]
+                self.dexNo = self.pokeDict["num"]
             else:
-                if not self.dexNo:
-                    self.dexNo = r.randint(1, b=GEN_POKEDEX_KEY[self.gen])
+                self.dexNo = r.randint(1, b=GEN_POKEDEX_KEY[self.gen])
                 self.name = next((key for key, value in POKEDEX_DATA.items() if value.get('num') == self.dexNo))
                 self.pokeDict = POKEDEX_DATA[self.name]
-            self.dexNo = self.pokeDict["num"]
+            if isFullyEvolved:
+                if "evos" in self.pokeDict:
+                    evolution = r.choice(self.pokeDict["evos"])
+                    self.select_pokemon(evolution.lower(), isFullyEvolved)
         except(KeyError):
             KeyError("It appears your pokemon's name was spelled incorrectly.\n Make sure not to include any spaces or special characters.")
 
@@ -111,24 +116,21 @@ class Pokemon:
             self.IVs[i] = r.randint(0,31)
 
     def generate_held_item(self):
-        itemNo = r.randint(0,len(ITEM_DATA))
+        itemNo = r.randint(0,len(ITEM_DATA)-1)
         key = list(ITEM_DATA)[itemNo]
         self.item = ITEM_DATA[key]["name"]
 
-
-    def randomize(self, pkmn:bool = True, abty:bool = True, mvst:bool = True, 
-                  EV:bool = False, IV:bool = False, item:bool = False):
-        if pkmn:
-            self.select_pokemon()
-        if abty:
+    def randomize(self, abty:bool = False, mvst:bool = False, 
+                  EV:bool = False, IV:bool = False, item:bool = False, all:bool=False):
+        if abty or all:
             self.generate_ability()
-        if mvst: 
+        if mvst or all: 
             self.generate_moveset()
-        if EV:
+        if EV or all:
             self.generate_EVs()
-        if IV:
+        if IV or all:
             self.generate_IVs()
-        if item:
+        if item or all:
             self.generate_held_item()
     
     def pokepaste(self):
