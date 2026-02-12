@@ -1,18 +1,17 @@
 import random as r
 import json
+import os
+
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 GEN_POKEDEX_KEY = {1: 151, 2: 251, 3: 386, 4: 493, 5: 649, 6: 721, 7: 809, 8: 905, 9: 1025}
-NUM_ITEMS = 582
-with open('Pokemon Randomizer/pokedex.json', 'r', encoding='utf-8') as file:
+with open(os.path.join(__location__, "pokedex.json"), 'r', encoding='utf-8') as file:
     POKEDEX_DATA = json.load(file)
-with open('Pokemon Randomizer/learnsets.json', 'r', encoding='utf-8') as file:
+with open(os.path.join(__location__, "learnsets.json"), 'r', encoding='utf-8') as file:
     LEARNSET_DATA = json.load(file)
-with open("Pokemon Randomizer/items.json", "r") as file:
-    unfiliterd_items = json.load(file)
-for item in unfiliterd_items:
-    if item["itemUser"]:
-        unfiliterd_items.remove[item]
-ITEM_DATA = unfiliterd_items
+with open(os.path.join(__location__, "items.json"), "r", encoding='utf-8') as file:
+    ITEM_DATA = json.load(file)
 
 class Pokemon:
     def __init__(self, gameGeneration=9, level:int = 1, dexNo:int = 0, name:str = "", fullGen:bool = True):
@@ -25,9 +24,8 @@ class Pokemon:
         self.name = name
         self.lvl = level
         self.gen = gameGeneration
-        if name:
-            self.select_pokemon(name)
-
+        self.select_pokemon(name)
+        
         self.ability = ""
         self.nature = ""
         self.item = ""
@@ -113,14 +111,10 @@ class Pokemon:
             self.IVs[i] = r.randint(0,31)
 
     def generate_held_item(self):
-        itemNo = r.randint(0,NUM_ITEMS)
+        itemNo = r.randint(0,len(ITEM_DATA))
+        key = list(ITEM_DATA)[itemNo]
+        self.item = ITEM_DATA[key]["name"]
 
-        for key in ITEM_DATA:
-            if i == itemNo:
-                self.item = ITEM_DATA[key]["name"]
-                return
-            else:
-                i+= 1
 
     def randomize(self, pkmn:bool = True, abty:bool = True, mvst:bool = True, 
                   EV:bool = False, IV:bool = False, item:bool = False):
@@ -154,8 +148,6 @@ class Pokemon:
         for move in self.moveset:
             pokepaste += f'- {move}\n' 
         return pokepaste
-        
-    print('\n')
-    
+            
     def __repr__(self):
         return self.pokeDict
