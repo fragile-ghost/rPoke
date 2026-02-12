@@ -6,11 +6,11 @@ __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 GEN_POKEDEX_KEY = {1: 151, 2: 251, 3: 386, 4: 493, 5: 649, 6: 721, 7: 809, 8: 905, 9: 1025}
-with open(os.path.join(__location__, "pokedex.json"), 'r', encoding='utf-8') as file:
+with open(os.path.join(__location__, "resources/pokedex.json"), 'r', encoding='utf-8') as file:
     POKEDEX_DATA = json.load(file)
-with open(os.path.join(__location__, "learnsets.json"), 'r', encoding='utf-8') as file:
+with open(os.path.join(__location__, "resources/learnsets.json"), 'r', encoding='utf-8') as file:
     LEARNSET_DATA = json.load(file)
-with open(os.path.join(__location__, "items.json"), "r", encoding='utf-8') as file:
+with open(os.path.join(__location__, "resources/items.json"), "r", encoding='utf-8') as file:
     ITEM_DATA = json.load(file)
 
 class Pokemon:
@@ -55,7 +55,6 @@ class Pokemon:
             KeyError("It appears your pokemon's name was spelled incorrectly.\n Make sure not to include any spaces or special characters.")
 
     def generate_ability(self):
-        self.ability = ""
         self.ability = r.choice(list(self.pokeDict["abilities"].values()))
 
     def generate_moveset(self, TMmoves=False, tutorMoves=False, eggMoves=False, 
